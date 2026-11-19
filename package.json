@@ -10,7 +10,8 @@
     "check:gemini": "node scripts/check-gemini-accounts.mjs --completion",
     "check:claude": "node scripts/check-gemini-claude.mjs",
     "check:account-routing": "node scripts/check-account-routing.mjs",
-    "check:agy-launch": "node scripts/check-agy-launch.mjs"
+    "check:agy-launch": "node scripts/check-agy-launch.mjs",
+    "capture:readme": "electron . --capture-readme"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.32.2",

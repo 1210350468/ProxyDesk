@@ -1,6 +1,7 @@
 import { app, BrowserWindow, clipboard, dialog, ipcMain, safeStorage, shell } from 'electron';
 import { spawn, execFile } from 'node:child_process';
 import { createHash, randomUUID } from 'node:crypto';
+import { mkdirSync } from 'node:fs';
 import fsp from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import net from 'node:net';
@@ -32,6 +33,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const cjsRequire = createRequire(import.meta.url);
 const projectRoot = path.resolve(__dirname, '..');
+const captureReadme = process.argv.includes('--capture-readme');
+if (captureReadme) {
+  const isolatedData = path.join(projectRoot, '.local-check', 'readme-capture-profile');
+  mkdirSync(isolatedData, { recursive: true });
+  app.setPath('userData', isolatedData);
+}
 const runtimeRoot = app.isPackaged ? path.join(process.resourcesPath, 'app') : projectRoot;
 const servicesRoot = path.resolve(process.env.PROXYDESK_SERVICES_ROOT || path.join(process.env.PORTABLE_EXECUTABLE_DIR || projectRoot, '..'));
 
@@ -114,7 +121,7 @@ const searchGateway = {
 };
 
 let mainWindow;
-const singleInstanceLock = app.requestSingleInstanceLock();
+const singleInstanceLock = captureReadme || app.requestSingleInstanceLock();
 if (!singleInstanceLock) app.quit();
 app.on('second-instance', () => {
   if (!mainWindow) return;
@@ -2077,6 +2084,7 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1380,
     height: 880,
+    show: !captureReadme,
     minWidth: 1120,
     minHeight: 720,
     backgroundColor: '#0b0d12',
@@ -2085,7 +2093,9 @@ function createWindow() {
     webPreferences: {
       preload: path.join(__dirname, 'preload.cjs'),
       contextIsolation: true,
-      nodeIntegration: false
+      nodeIntegration: false,
+      offscreen: captureReadme,
+      backgroundThrottling: false
     }
   });
   mainWindow.setMenuBarVisibility(false);
@@ -2101,7 +2111,53 @@ function createWindow() {
       shell.openExternal(url);
     }
   });
-  mainWindow.loadFile(path.join(__dirname, 'renderer', 'index.html'));
+  return mainWindow.loadFile(path.join(__dirname, 'renderer', 'index.html'));
+}
+
+async function captureReadmeScreenshots() {
+  const screenshotsDirectory = path.join(projectRoot, 'docs', 'screenshots');
+  await fsp.mkdir(screenshotsDirectory, { recursive: true });
+  await new Promise((resolve) => setTimeout(resolve, 2200));
+  const pages = [
+    ['01-overview.png', 'overview', 'page-overview'],
+    ['02-agy-accounts.png', 'gemini', 'agy-switch-card'],
+    ['03-agy-launch.png', 'gemini', 'agy-launch-controls'],
+    ['04-api-management.png', 'connect', 'page-connect'],
+    ['05-research-workbench.png', 'council', 'page-council']
+  ];
+  for (const [filename, page, target] of pages) {
+    const result = await mainWindow.webContents.executeJavaScript(`(() => {
+      navigate(${JSON.stringify(page)});
+      const view = document.getElementById(${JSON.stringify(target)}) || document.querySelector('.' + ${JSON.stringify(target)});
+      if (!view) throw new Error('截图目标不存在：' + ${JSON.stringify(target)});
+      view.scrollIntoView({ block: 'start' });
+      const scrub = (value) => String(value)
+        .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}/gi, '[账号已隐藏]')
+        .replace(/(?:sk-[A-Za-z0-9_-]{10,}|ghp_[A-Za-z0-9_-]{10,}|AIza[A-Za-z0-9_-]{10,})/g, '[密钥已隐藏]')
+        .replace(/https?:\\/\\/[^\\s<>"']*(?:\\.ts\\.net|tailscale)[^\\s<>"']*/gi, '[地址已隐藏]')
+        .replace(/[A-Z]:\\\\(?:Users|coding|Projects)\\\\[^\\s<>"']*/gi, '[本地路径已隐藏]');
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+      let textNode;
+      while ((textNode = walker.nextNode())) textNode.nodeValue = scrub(textNode.nodeValue);
+      document.querySelectorAll('input').forEach((input) => {
+        if (/key|token|workspace|directory|name|ip|url/i.test(input.id)) input.value = '';
+      });
+      const researchInput = document.getElementById('council-input');
+      if (researchInput) researchInput.value = '';
+      const log = document.getElementById('activity-log');
+      if (log) log.textContent = '运行记录已隐藏';
+      const activePage = document.querySelector('.page.active');
+      const visibleText = activePage?.innerText || '';
+      const sensitive = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}|(?:sk-[A-Za-z0-9_-]{10,}|ghp_[A-Za-z0-9_-]{10,}|AIza[A-Za-z0-9_-]{10,})/i.test(visibleText);
+      if (sensitive) throw new Error('公开截图仍含有账号或密钥');
+      return { page: ${JSON.stringify(page)}, title: document.getElementById('page-title').textContent, width: innerWidth, height: innerHeight };
+    })()`);
+    await new Promise((resolve) => setTimeout(resolve, 180));
+    const png = (await mainWindow.webContents.capturePage()).toPNG();
+    if (png.length < 18000) throw new Error(`截图输出异常：${filename}，${png.length} 字节`);
+    await fsp.writeFile(path.join(screenshotsDirectory, filename), png);
+    console.log(`README_SCREENSHOT=${filename}; bytes=${png.length}; page=${result.page}; size=${result.width}x${result.height}`);
+  }
 }
 
 function registerIpc() {
@@ -2207,10 +2263,16 @@ function registerIpc() {
 if (singleInstanceLock) {
   app.whenReady().then(async () => {
     await ensureRunDirectories();
-    await startSearchGateway();
-    await friendGateway.init();
+    if (!captureReadme) {
+      await startSearchGateway();
+      await friendGateway.init();
+    }
     registerIpc();
-    createWindow();
+    await createWindow();
+    if (captureReadme) {
+      await captureReadmeScreenshots();
+      app.quit();
+    }
   });
 }
 

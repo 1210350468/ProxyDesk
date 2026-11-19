@@ -19,6 +19,7 @@
 
 <p>
   <a href="#-核心功能">核心功能</a> ·
+  <a href="#-实际界面">实际界面</a> ·
   <a href="#-三步开始使用">快速开始</a> ·
   <a href="#-运行环境与组件">运行环境</a> ·
   <a href="#-开发与构建">开发与构建</a> ·
@@ -26,6 +27,41 @@
 </p>
 
 </div>
+
+## 🖥️ 实际界面
+
+下面的图片由 ProxyDesk 1.15.0 的真实 Electron 页面生成，公开展示时已隐藏本地账号、密钥和个人运行记录。
+
+<p align="center">
+  <a href="docs/screenshots/01-overview.png"><img src="docs/screenshots/01-overview.png" alt="ProxyDesk 桌面总览：本地代理服务、状态监控和快速操作" width="94%" /></a>
+  <br />
+  <sub>桌面总览：服务状态、模型入口和快速操作</sub>
+</p>
+
+<table>
+  <tr>
+    <td width="50%" align="center" valign="top">
+      <a href="docs/screenshots/02-agy-accounts.png"><img src="docs/screenshots/02-agy-accounts.png" alt="AGY 多账号管理与切换界面" width="100%" /></a><br />
+      <strong>AGY 账号管理</strong><br /><sub>导入账号 · 查看账号 · 一键切换</sub>
+    </td>
+    <td width="50%" align="center" valign="top">
+      <a href="docs/screenshots/03-agy-launch.png"><img src="docs/screenshots/03-agy-launch.png" alt="AGY CLI 工作目录和历史会话启动界面" width="100%" /></a><br />
+      <strong>AGY 一键启动</strong><br /><sub>选择项目目录 · 新建或恢复会话</sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center" valign="top">
+      <a href="docs/screenshots/04-api-management.png"><img src="docs/screenshots/04-api-management.png" alt="ProxyDesk API 管理页面" width="100%" /></a><br />
+      <strong>模型 API 管理</strong><br /><sub>独立客户端密钥 · 模型接入 · 使用记录</sub>
+    </td>
+    <td width="50%" align="center" valign="top">
+      <a href="docs/screenshots/05-research-workbench.png"><img src="docs/screenshots/05-research-workbench.png" alt="ProxyDesk 多角色科研工作台页面" width="100%" /></a><br />
+      <strong>多角色科研工作台</strong><br /><sub>Quick · Swarm · Expert Council</sub>
+    </td>
+  </tr>
+</table>
+
+📖 [查看完整功能导览与使用流程](docs/FEATURES.md)
 
 ## ✨ 核心功能
 
