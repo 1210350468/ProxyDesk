@@ -1,0 +1,727 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ProxyDesk</title>
+  <link rel="icon" href="../../assets/icon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark"><img src="../../assets/icon.svg" alt="ProxyDesk" /></div>
+        <div>
+          <div class="brand-title">ProxyDesk</div>
+          <div class="brand-subtitle">Local AI Gateway</div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <button class="nav-item active" data-page="overview"><span>◈</span> 总览</button>
+        <button class="nav-item" data-page="gemini"><span>✦</span> Gemini 账号</button>
+        <button class="nav-item" data-page="search"><span>⌕</span> 联网搜索</button>
+        <button class="nav-item" data-page="connect"><span>↗</span> API 管理</button>
+        <button class="nav-item" data-page="codex"><span>⌘</span> Scoped Codex</button>
+        <button class="nav-item" data-page="council"><span>◎</span> 研究议会</button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="mini-status"><span class="dot" id="sidebar-search-dot"></span><span>Search MCP :8321</span></div>
+        <div class="version">ProxyDesk 1.14.1</div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <h1 id="page-title">本地 AI 代理控制中心</h1>
+          <p id="page-subtitle">统一控制 Antigravity、Gemini Web、AsterBridge、搜索工具、隔离 Codex 和研究议会。</p>
+        </div>
+        <div class="top-actions">
+          <button class="button ghost back-button" id="back-overview">← 返回总览</button>
+          <button class="button ghost" id="refresh-all">刷新状态</button>
+          <button class="button primary" id="start-all">一键启动全部</button>
+        </div>
+      </header>
+
+      <section class="page active" id="page-overview">
+        <div class="grid three service-grid">
+          <article class="card service-card">
+            <div class="card-header">
+              <div>
+                <div class="eyebrow">PORT 8318</div>
+                <h2>Antigravity CPA</h2>
+              </div>
+              <div class="status-pill" id="status-antigravity"><span class="dot"></span><span>检测中</span></div>
+            </div>
+            <p class="muted">OpenAI Responses / Chat / Gemini 原生协议，含 Antigravity OAuth 模型。</p>
+            <div class="button-row">
+              <button class="button primary small" data-service-action="start" data-service="antigravity">启动</button>
+              <button class="button ghost small" data-service-action="stop" data-service="antigravity">停止</button>
+              <button class="button ghost small" data-admin="antigravity">管理面板</button>
+            </div>
+          </article>
+
+          <article class="card service-card">
+            <div class="card-header">
+              <div>
+                <div class="eyebrow">PORT 17841</div>
+                <h2>AsterBridge</h2>
+              </div>
+              <div class="status-pill" id="status-asterbridge"><span class="dot"></span><span>检测中</span></div>
+            </div>
+            <p class="muted">ChatGPT Web Responses API，可提供 light / medium / high，并保持独立于 Codex Desktop。</p>
+            <div class="button-row">
+              <button class="button primary small" data-service-action="start" data-service="asterbridge">启动</button>
+              <button class="button ghost small" data-admin="asterbridge">打开 AsterBridge</button>
+            </div>
+          </article>
+
+          <article class="card service-card">
+            <div class="card-header">
+              <div>
+                <div class="eyebrow">PORT 8083</div>
+                <h2>Gemini Web Proxy</h2>
+              </div>
+              <div class="status-pill" id="status-web"><span class="dot"></span><span>检测中</span></div>
+            </div>
+            <p class="muted">Gemini 网页端 Cookie 反代，提供 OpenAI-compatible API。</p>
+            <div class="button-row">
+              <button class="button primary small" data-service-action="start" data-service="web">启动</button>
+              <button class="button ghost small" data-service-action="stop" data-service="web">停止</button>
+              <button class="button ghost small" data-admin="web">管理面板</button>
+            </div>
+          </article>
+
+          <article class="card service-card accent-card">
+            <div class="card-header">
+              <div>
+                <div class="eyebrow">PORT 8321</div>
+                <h2>ProxyDesk Search</h2>
+              </div>
+              <div class="status-pill" id="status-search"><span class="dot"></span><span>检测中</span></div>
+            </div>
+            <p class="muted">Google Search grounding → HTTP `/search` + Streamable HTTP MCP `/mcp`。</p>
+            <div class="button-row">
+              <button class="button primary small" data-nav-target="search">打开搜索</button>
+              <button class="button ghost small" data-nav-target="connect">查看接入</button>
+            </div>
+          </article>
+        </div>
+
+        <div class="grid two lower-grid">
+          <article class="card">
+            <div class="card-header">
+              <div>
+                <div class="eyebrow">ANTIGRAVITY QUOTA</div>
+                <h2>默认账号额度</h2>
+              </div>
+              <button class="icon-button" id="refresh-quota" title="刷新额度">↻</button>
+            </div>
+            <div id="quota-tier" class="tier-chip">读取中…</div>
+            <div id="quota-content" class="quota-content"></div>
+          </article>
+
+          <article class="card">
+            <div class="card-header">
+              <div>
+                <div class="eyebrow">QUICK ACTIONS</div>
+                <h2>快速操作</h2>
+              </div>
+            </div>
+            <div class="quick-actions">
+              <button class="action-tile" data-nav-target="gemini"><span class="action-icon">✦</span><span><strong>Gemini 多账号</strong><small>自动识别会员等级 · 模型权限 · Claude Code</small></span></button>
+              <button class="action-tile" data-nav-target="search"><span class="action-icon">⌕</span><span><strong>实时 Google 搜索</strong><small>Gemini 3.8 Flash High + Grounding</small></span></button>
+              <button class="action-tile" data-nav-target="connect"><span class="action-icon">↗</span><span><strong>API 管理</strong><small>模型选择 · 独立密钥 · 远程连接</small></span></button>
+              <button class="action-tile" data-nav-target="codex"><span class="action-icon">⌘</span><span><strong>启动 Scoped Codex</strong><small>只影响本次运行时</small></span></button>
+              <button class="action-tile" data-nav-target="council"><span class="action-icon">◎</span><span><strong>召开研究议会</strong><small>多智能体发散 / 圆桌 / 红队</small></span></button>
+              <button class="action-tile danger-soft" id="stop-all"><span class="action-icon">■</span><span><strong>停止 CPA / Gemini Web</strong><small>AsterBridge 由自己的 Launcher 独立管理</small></span></button>
+            </div>
+          </article>
+        </div>
+
+        <article class="card console-card">
+          <div class="card-header">
+            <div>
+              <div class="eyebrow">ACTIVITY</div>
+              <h2>操作记录</h2>
+            </div>
+            <button class="button ghost small" id="clear-log">清空</button>
+          </div>
+          <pre id="activity-log">ProxyDesk 已启动。</pre>
+        </article>
+      </section>
+
+      <section class="page" id="page-gemini">
+        <article class="card gemini-intro">
+          <div class="card-header">
+            <div>
+              <div class="eyebrow">GOOGLE ACCOUNT ROUTING</div>
+              <h2>Gemini 多账号</h2>
+              <p class="muted">添加或重新授权 Google 账号，自动识别 Pro / Ultra 订阅；可以暂停、启用或移除账号。多个同等级账号会自动轮询使用。</p>
+            </div>
+            <div class="button-row">
+              <button class="button ghost" id="gemini-refresh">刷新账号与订阅</button>
+              <button class="button primary" id="gemini-login">添加 Google 账号</button>
+            </div>
+          </div>
+          <p class="muted" id="gemini-login-status" aria-live="polite"></p>
+        </article>
+
+        <div class="gemini-accounts" id="gemini-account-list">
+          <article class="card"><p class="muted">正在读取 Antigravity 账号…</p></article>
+        </div>
+
+        <article class="card gemini-intro agy-switch-card">
+          <div class="card-header">
+            <div>
+              <div class="eyebrow">OFFICIAL AGY CLI</div>
+              <h2>一键切换 AGY 账号</h2>
+              <p class="muted">为官方 agy 命令行选择 Google 登录账号。切换后新启动的 agy 会使用选中的账号。</p>
+            </div>
+            <div class="button-row">
+              <button class="button ghost" id="agy-switch-refresh">刷新账号</button>
+              <button class="button primary" id="agy-switch-manage">添加或导入账号</button>
+            </div>
+          </div>
+          <div id="agy-switch-status" class="muted" aria-live="polite"></div>
+          <div id="agy-switch-accounts" class="agy-switch-accounts"></div>
+          <div class="agy-launch-controls">
+            <div class="card-header">
+              <div>
+                <h3>启动 AGY CLI</h3>
+                <p class="muted">使用上方选中的账号，在指定项目目录启动独立终端。</p>
+              </div>
+            </div>
+            <label class="form-label" for="agy-workspace">工作目录</label>
+            <div class="input-row">
+              <input id="agy-workspace" class="input" placeholder="选择项目目录" readonly />
+              <button class="button ghost" id="agy-choose-workspace">选择目录</button>
+            </div>
+            <label class="form-label" for="agy-launch-mode">对话方式</label>
+            <select id="agy-launch-mode" class="select full">
+              <option value="new">开始新对话</option>
+              <option value="continue">继续最近的对话</option>
+              <option value="conversation">恢复指定会话</option>
+            </select>
+            <div id="agy-conversation-controls" hidden>
+              <label class="form-label" for="agy-conversation-id">AGY 会话 ID</label>
+              <input id="agy-conversation-id" class="input full" placeholder="输入要恢复的会话 ID" autocomplete="off" />
+            </div>
+            <div class="button-row agy-launch-actions">
+              <button class="button primary" id="agy-launch">启动 AGY</button>
+              <span id="agy-launch-status" class="muted" aria-live="polite"></span>
+            </div>
+            <p class="muted">在 AGY 终端输入 <code>/resume</code>，可以浏览和搜索历史对话，按 Tab 还能查看 Antigravity 桌面端的对话。</p>
+          </div>
+        </article>
+
+        <div class="grid two gemini-tools">
+          <article class="card">
+            <div class="card-header"><div><div class="eyebrow">CLAUDE CODE</div><h2>启动隔离 Claude Code</h2></div><span class="safe-badge">进程独立配置</span></div>
+            <label class="form-label" for="gemini-slot">选择账号</label>
+            <select id="gemini-slot" class="select full">
+              <option value="auto">自动分配 · 所有可用账号</option>
+              <option value="pro">Google AI Pro</option>
+              <option value="ultra">Google AI Ultra</option>
+            </select>
+            <label class="form-label" for="gemini-model">可用模型</label>
+            <select id="gemini-model" class="select full"></select>
+            <label class="form-label" for="gemini-workspace">工作目录</label>
+            <div class="input-row">
+              <input id="gemini-workspace" class="input" placeholder="选择 Claude Code 项目目录" readonly />
+              <button class="button ghost" id="gemini-choose-workspace">选择目录</button>
+            </div>
+            <p class="muted">根据所选账号传入模型前缀。Claude Code 的环境变量只作用于新启动的终端。</p>
+            <button class="button primary wide" id="gemini-launch-claude">启动 Claude Code</button>
+          </article>
+          <article class="card">
+            <div class="card-header"><div><div class="eyebrow">API CONNECTION</div><h2>模型接口与连接参数</h2></div></div>
+            <p class="muted">选择 Pro / Ultra 的模型后，可以前往「API 管理」复制连接地址、查看独立 API Key 和配置其他客户端。</p>
+            <pre id="gemini-api-example" class="code-block">请选择账号和模型。</pre>
+            <button class="button primary" data-nav-target="connect">打开 API 管理</button>
+          </article>
+        </div>
+      </section>
+
+      <section class="page" id="page-search">
+        <div class="search-layout">
+          <article class="card search-panel">
+            <div class="card-header">
+              <div>
+                <div class="eyebrow">GOOGLE SEARCH GROUNDING</div>
+                <h2>联网搜索工具</h2>
+              </div>
+              <select id="search-model" class="select compact">
+                <option value="gemini-3.8-flash-high">gemini-3.8-flash-high</option>
+                <option value="gemini-3.7-flash-high">gemini-3.7-flash-high</option>
+                <option value="gemini-3.6-flash-high">gemini-3.6-flash-high</option>
+              </select>
+            </div>
+            <textarea id="search-query" class="textarea" placeholder="例如：搜索今天 Python 官方网站展示的最新稳定版本，并给出来源。"></textarea>
+            <div class="search-actions">
+              <span class="hint">请求直接走 Antigravity Gemini 原生 googleSearch 工具。</span>
+              <button class="button primary" id="run-search">开始搜索</button>
+            </div>
+          </article>
+
+          <article class="card search-result-card">
+            <div class="card-header">
+              <div>
+                <div class="eyebrow">RESULT</div>
+                <h2>搜索结果</h2>
+              </div>
+              <span class="grounding-badge" id="grounding-badge">等待搜索</span>
+            </div>
+            <div id="search-answer" class="answer empty-state">输入问题后点击“开始搜索”。</div>
+            <div id="search-sources" class="sources"></div>
+          </article>
+        </div>
+
+        <div class="grid two">
+          <article class="card endpoint-card">
+            <div class="eyebrow">PLAIN HTTP</div>
+            <h3>给脚本 / 服务调用</h3>
+            <div class="endpoint-line"><code>POST http://127.0.0.1:8321/search</code><button class="copy-button" data-copy="http-search">复制</button></div>
+            <pre id="http-search-snippet" class="code-block"></pre>
+          </article>
+          <article class="card endpoint-card">
+            <div class="eyebrow">MCP</div>
+            <h3>给 Codex / Cursor / Agent</h3>
+            <div class="endpoint-line"><code>http://127.0.0.1:8321/mcp</code><button class="copy-button" data-copy="mcp-url">复制</button></div>
+            <p class="muted">工具名：<code>web_search</code>。只读、开放网络工具，结果包含回答、搜索词和来源。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="page" id="page-connect">
+        <article class="card friend-overview">
+          <div class="card-header">
+            <div>
+              <div class="eyebrow">UNIFIED API MANAGEMENT</div>
+              <h2>统一 API 地址与密钥</h2>
+              <p class="muted">每个 API Key 支持自动分配可用账号或固定指定邮箱，集中管理模型与远程连接。</p>
+            </div>
+            <div class="button-row">
+              <span class="status-pill" id="friend-gateway-status"><span class="dot"></span><span>检测中</span></span>
+              <button class="button ghost" id="friend-refresh">刷新</button>
+              <button class="button primary" id="friend-toggle">启用 API</button>
+            </div>
+          </div>
+          <div class="friend-endpoint-bar">
+            <div><span class="form-label">HTTPS API 地址</span><code id="friend-base-url">读取中…</code></div>
+            <button class="copy-button" id="friend-copy-url">复制地址</button>
+          </div>
+          <p id="friend-gateway-error" class="muted"></p>
+        </article>
+
+        <article class="card friend-clients">
+          <div class="card-header"><div><div class="eyebrow">API KEYS</div><h2>密钥管理与使用记录</h2></div></div>
+          <div id="friend-client-list"><p class="muted">正在读取 API Key…</p></div>
+        </article>
+
+        <div class="grid two friend-workspace">
+          <article class="card">
+            <div class="card-header"><div><div class="eyebrow">CREATE API KEY</div><h2>新增 API Key</h2></div></div>
+            <div class="friend-fields">
+              <div><label class="form-label" for="friend-name">使用者名称</label><input id="friend-name" class="input" placeholder="例如：笔记本电脑、朋友" maxlength="48" /></div>
+              <div><label class="form-label" for="friend-ip">设备地址备注（可选）</label><input id="friend-ip" class="input" placeholder="例如：100.101.102.103" /></div>
+              <div class="friend-account-field"><label class="form-label" for="friend-account">账号分配方式</label><select id="friend-account" class="select full"><option value="auto">自动分配 · 可用账号轮询</option></select></div>
+            </div>
+            <button class="button primary wide" id="friend-create">创建 API Key</button>
+            <section id="friend-new-key" class="friend-new-key" hidden>
+              <strong>新密钥已加密保存，随时可以再次查看</strong>
+              <div class="input-row"><input id="friend-key-value" class="input" readonly /><button class="copy-button" id="friend-copy-key">复制密钥</button></div>
+              <button class="button ghost small" id="friend-copy-config">复制完整接入配置</button>
+            </section>
+          </article>
+          <article class="card">
+            <div class="card-header"><div><div class="eyebrow">MODELS & CLIENTS</div><h2>模型与接入方法</h2></div><button class="copy-button" id="friend-copy-example">复制示例</button></div>
+            <p class="muted">选择客户端的自定义 OpenAI 或 Anthropic API 提供商，填写域名、独立密钥和模型名称即可调用。</p>
+            <pre class="code-block" id="friend-usage-example">正在读取连接信息…</pre>
+            <details class="gemini-model-details" open><summary id="friend-model-count">可用模型</summary><div class="model-list" id="friend-model-list"></div></details>
+          </article>
+        </div>
+
+        <details class="api-advanced-details">
+          <summary>本机服务、其他模型接口与接入模板</summary>
+        <div class="grid two connect-grid">
+          <article class="card provider-card">
+            <div class="provider-title-row">
+              <div>
+                <div class="eyebrow">PROVIDER A</div>
+                <h2>Antigravity CPA</h2>
+              </div>
+              <span class="protocol-badge">Responses ✓</span>
+            </div>
+            <div class="field-display"><span>Base URL</span><code id="antigravity-base-url">读取中…</code><button class="copy-button" data-copy="antigravity-base">复制</button></div>
+            <div class="field-display"><span>API Key</span><code id="antigravity-key">读取中…</code><button class="copy-button" data-reveal-local="antigravity">显示密钥</button><button class="copy-button" data-copy-key="antigravity">复制</button></div>
+            <div class="model-list" id="antigravity-models"></div>
+          </article>
+
+          <article class="card provider-card">
+            <div class="provider-title-row">
+              <div>
+                <div class="eyebrow">PROVIDER C</div>
+                <h2>AsterBridge</h2>
+              </div>
+              <span class="protocol-badge">Responses ✓</span>
+            </div>
+            <div class="field-display"><span>Base URL</span><code id="asterbridge-base-url">读取中…</code><button class="copy-button" data-copy="asterbridge-base">复制</button></div>
+            <div class="field-display"><span>API Key</span><code id="asterbridge-key">local</code><button class="copy-button" data-reveal-local="asterbridge">显示密钥</button><button class="copy-button" data-copy-key="asterbridge">复制</button></div>
+            <div class="model-list" id="asterbridge-models"></div>
+          </article>
+
+          <article class="card provider-card">
+            <div class="provider-title-row">
+              <div>
+                <div class="eyebrow">PROVIDER B</div>
+                <h2>Gemini Web Proxy</h2>
+              </div>
+              <span class="protocol-badge">Responses ✓</span>
+            </div>
+            <div class="field-display"><span>Base URL</span><code id="web-base-url">读取中…</code><button class="copy-button" data-copy="web-base">复制</button></div>
+            <div class="field-display"><span>API Key</span><code id="web-key">读取中…</code><button class="copy-button" data-reveal-local="web">显示密钥</button><button class="copy-button" data-copy-key="web">复制</button></div>
+            <div class="model-list" id="web-models"></div>
+          </article>
+        </div>
+
+        <article class="card snippets-card">
+          <div class="card-header">
+            <div>
+              <div class="eyebrow">COPY & USE</div>
+              <h2>接入模板</h2>
+            </div>
+            <div class="segmented" id="snippet-tabs">
+              <button class="active" data-snippet="responses">Responses</button>
+              <button data-snippet="chat">Chat</button>
+              <button data-snippet="mcp">Search MCP</button>
+              <button data-snippet="gemini">Gemini 原生</button>
+            </div>
+          </div>
+          <div class="snippet-toolbar">
+            <select id="snippet-provider" class="select compact">
+              <option value="antigravity">Antigravity CPA</option>
+              <option value="web">Gemini Web Proxy</option>
+              <option value="asterbridge">AsterBridge</option>
+            </select>
+            <button class="copy-button" id="copy-snippet">复制代码</button>
+          </div>
+          <pre id="connection-snippet" class="code-block large"></pre>
+          <div class="notice">Responses API 路径为 <code>/v1/responses</code>。Antigravity 的 Google Search 建议使用 Gemini 原生 <code>googleSearch</code>，或直接接 ProxyDesk Search MCP。</div>
+        </article>
+        </details>
+      </section>
+
+      <section class="page" id="page-codex">
+        <div class="codex-layout">
+          <article class="card codex-launch-card">
+            <div class="card-header">
+              <div>
+                <div class="eyebrow">PROCESS-SCOPED CONFIG</div>
+                <h2>启动隔离 Codex</h2>
+              </div>
+              <span class="safe-badge">不改全局配置</span>
+            </div>
+
+            <label class="form-label">工作目录</label>
+            <div class="input-row">
+              <input id="codex-cwd" class="input" placeholder="选择 Codex 要工作的项目目录" readonly />
+              <button class="button ghost" id="choose-codex-cwd">选择目录</button>
+            </div>
+
+            <div class="grid two form-grid">
+              <div>
+                <label class="form-label">API Provider</label>
+                <select id="codex-provider" class="select full">
+                  <option value="antigravity">Antigravity CPA · :8318</option>
+                  <option value="web">Gemini Web Proxy · :8083</option>
+                  <option value="asterbridge">AsterBridge · :17841</option>
+                </select>
+              </div>
+              <div>
+                <label class="form-label">模型</label>
+                <select id="codex-model" class="select full"></select>
+              </div>
+            </div>
+
+            <label class="checkbox-row">
+              <input type="checkbox" id="codex-search" checked />
+              <span><strong>挂载 ProxyDesk Search MCP</strong><small>只给这次 Codex 运行时添加 <code>proxydesk_search</code>。</small></span>
+            </label>
+
+            <div class="isolation-box">
+              <strong>隔离方式</strong>
+              <p>启动时使用 Codex CLI <code>-c</code> 参数注入临时 model provider，并把 API Key 放进这个子进程的环境变量。不会写入 <code>~/.codex/config.toml</code>，不会修改系统环境变量，也不会改变 Codex Desktop、VS Code 扩展或其他终端中的 Codex。</p>
+            </div>
+
+            <button class="button primary wide" id="launch-codex">启动 Scoped Codex</button>
+          </article>
+
+          <article class="card codex-sessions-card">
+            <div class="card-header">
+              <div>
+                <div class="eyebrow">ACTIVE RUNTIMES</div>
+                <h2>当前挂载</h2>
+              </div>
+              <button class="icon-button" id="refresh-codex">↻</button>
+            </div>
+            <div id="codex-sessions" class="session-list">
+              <div class="empty-state">当前没有 ProxyDesk 启动的 Codex。</div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="page research-v2" id="page-council">
+        <header class="research-v2-header">
+          <div>
+            <div class="eyebrow">PROXYDESK RESEARCH ENGINE</div>
+            <h1>科研工作台</h1>
+            <p>一个入口完成问题输入、研究模式选择、运行监控与结论收敛。其余能力全部收进工具抽屉。</p>
+          </div>
+          <div class="research-v2-header-state">
+            <div class="status-pill" id="status-council"><span class="dot"></span><span>空闲</span></div>
+            <span class="grounding-badge" id="research-engine-state">Research Engine · 空闲</span>
+            <button class="button ghost small" id="cancel-research-engine" disabled>终止当前任务</button>
+          </div>
+        </header>
+
+        <div class="research-v2-main council-workbench">
+          <article class="research-v2-composer council-compose-card">
+            <div class="research-v2-modebar" aria-label="研究模式">
+              <button class="research-entry primary" type="button" id="run-quick-research"><strong>Quick</strong><span>3 Researcher · Reviewer · PI</span><small>当前选择</small></button>
+              <button class="research-entry" type="button" id="run-directed-research"><strong>Swarm</strong><span>5 workers · Forum · Reviewer · PI</span><small>选择模式</small></button>
+              <button class="research-entry" type="button" id="show-expert-council"><strong>Council</strong><span>九席专业审议</span><small>选择模式</small></button>
+            </div>
+
+            <div class="research-mode-inspector" id="research-mode-inspector">
+              <div class="research-mode-inspector-head">
+                <div><span class="research-mode-kicker">当前模式</span><strong id="research-selected-mode">Quick Iteration</strong></div>
+                <span class="grounding-badge" id="research-selected-count">3 Researcher</span>
+              </div>
+              <p id="research-selected-description">并行读取当前证据，由独立 Reviewer 反驳，再由 PI 给出本轮研究决策。</p>
+              <div class="research-mode-plan" id="research-mode-plan"></div>
+              <div class="research-mode-runtime" id="research-mode-runtime">正在读取 Runtime Profile…</div>
+              <div class="research-mode-actions">
+                <button class="button primary" type="button" id="start-research-run">开始 Quick Iteration</button>
+                <button class="button ghost small" type="button" id="open-selected-mode-settings" hidden>查看 Council 设置</button>
+                <span class="hint" id="research-start-hint">点击上方模式只会切换配置，只有这里会真正开始执行。</span>
+              </div>
+            </div>
+
+            <textarea id="council-input" class="textarea council-input">课题：
+统一室内 3D 重建 + 语义理解 / 开放词汇语义，目标顶会。
+
+当前方案 / baseline：
+以 DA3 / VGGT 类几何 backbone 为基础，语义侧考虑 SigLIP2、SAM / QueryMask 等，希望 geometry 与 semantics 能够双向促进。
+
+请尽可能探索真正不同的研究路线，并明确：
+1. 核心 scientific claim
+2. 为什么可能有效
+3. 与已有工作的真正区别
+4. 具体架构 / 信息流
+5. loss / training strategy
+6. 最关键的实验
+7. 最低成本证伪实验
+8. 最大失败风险
+9. 顶会 Reviewer 最可能攻击什么</textarea>
+
+            <div class="research-v2-context-strip">
+              <button class="research-v2-context-pill" type="button" id="open-context-drawer"><strong>项目上下文</strong><span id="protocol-slot-count">0 份固定文档</span></button>
+              <label class="form-switch council-inherit-switch">
+                <input type="checkbox" id="council-inherit-enabled" />
+                <span>继承上一轮</span>
+              </label>
+              <select id="council-inherit-run" class="select council-inherit-select" disabled>
+                <option value="">暂无可继承会议</option>
+              </select>
+              <span class="council-inherit-hint" id="council-inherit-hint">只继承压缩后的 Research Memory / PI Decision。</span>
+            </div>
+
+            <details class="research-v2-drawer council-mode-details" id="expert-council-options">
+              <summary>Expert Council 设置</summary>
+              <div class="council-mode-grid" id="council-mode-grid">
+                <button class="council-mode active" data-council-mode="full-pipeline"><strong>完整流程</strong><span>发散 → 圆桌 → 红队</span></button>
+                <button class="council-mode" data-council-mode="idea-explosion"><strong>并行发散</strong><span>八位专家并行</span></button>
+                <button class="council-mode" data-council-mode="research-council"><strong>完整圆桌</strong><span>九席依次讨论</span></button>
+                <button class="council-mode" data-council-mode="red-team-review"><strong>红队审稿</strong><span>PI → Reviewer → Experiment</span></button>
+              </div>
+              <div class="council-run-bar" id="expert-council-run-bar">
+                <button class="button primary" id="run-council" hidden>运行 Expert Council</button>
+                <button class="button ghost" id="cancel-council" disabled>终止 Council</button>
+                <span class="hint" id="council-run-hint">完整流程会自动串联三个阶段。</span>
+              </div>
+            </details>
+          </article>
+
+          <aside class="research-v2-monitor council-progress-card">
+            <div class="research-v2-monitor-head">
+              <div><div class="eyebrow">LIVE RUN</div><h2>运行状态</h2></div>
+              <span class="grounding-badge" id="council-run-state">等待任务</span>
+            </div>
+            <div class="research-run-focus" id="research-run-focus">
+              <strong id="research-run-focus-title">Quick Iteration · 等待开始</strong>
+              <span id="research-run-focus-detail">选择模式后可先查看流程、模型配置和参与角色。</span>
+            </div>
+            <div class="council-flow" id="council-flow" aria-label="研究流程">
+              <div class="council-flow-node" data-flow-stage="context"><span><strong>上下文</strong><small>协议 / 记忆</small></span></div>
+              <span class="council-flow-arrow">›</span>
+              <div class="council-flow-node" data-flow-stage="idea-explosion"><span><strong>发散</strong><small>并行专家</small></span></div>
+              <span class="council-flow-arrow">›</span>
+              <div class="council-flow-node" data-flow-stage="research-council"><span><strong>圆桌</strong><small>交叉讨论</small></span></div>
+              <span class="council-flow-arrow">›</span>
+              <div class="council-flow-node" data-flow-stage="red-team-review"><span><strong>红队</strong><small>攻击 / 证伪</small></span></div>
+              <span class="council-flow-arrow">›</span>
+              <div class="council-flow-node" data-flow-stage="final-verdict"><span><strong>决议</strong><small>PI 收敛</small></span></div>
+              <span class="council-flow-arrow">›</span>
+              <div class="council-flow-node" data-flow-stage="memory-summary"><span><strong>记忆</strong><small>迭代胶囊</small></span></div>
+            </div>
+            <div id="council-live-agents" class="council-live-agents"><div class="empty-state">任务开始后显示正在工作的专家。</div></div>
+            <div class="council-timeline-wrap">
+              <div class="council-timeline-title"><strong>实时事件</strong><span>只显示可观察状态</span></div>
+              <div id="council-live-timeline" class="council-live-timeline"><div class="empty-state">暂无事件。</div></div>
+            </div>
+            <div id="council-stage-list" class="council-stage-list"><div class="empty-state">暂无阶段任务。</div></div>
+          </aside>
+        </div>
+
+        <article class="research-v2-result council-decision-card" id="council-decision-card">
+          <div class="research-v2-result-head">
+            <div><div class="eyebrow">RESEARCH DECISION</div><h2>研究结论</h2><span class="council-decision-status" id="council-decision-status">等待任务开始</span></div>
+            <div class="button-row">
+              <button class="button ghost small" id="continue-council-run" disabled>继续下一轮</button>
+              <button class="copy-button" id="copy-council-final" disabled>复制结论</button>
+              <button class="button ghost small" id="open-council-markdown" disabled>打开报告</button>
+            </div>
+          </div>
+          <div id="council-final-output" class="council-final-output empty-state">任务完成后，PI 会在这里给出主推路线、否决项、关键实验和下一步行动。</div>
+        </article>
+
+        <article class="research-v2-recovery council-recovery-card" id="council-recovery-card" hidden>
+          <div class="research-v2-tool-head"><div><strong>可修复席位</strong><small>只重跑失败专家，不动成功结果</small></div><span class="grounding-badge" id="council-recovery-count">0 个</span></div>
+          <div id="council-recovery-list" class="council-recovery-list"></div>
+        </article>
+
+        <div class="research-v2-tools">
+          <details class="research-v2-tool council-context-card" id="research-context-drawer">
+            <summary><span><strong>项目上下文</strong><small>协议槽、临时附件、继承状态</small></span><span>管理</span></summary>
+            <div class="research-v2-tool-body council-context-body">
+              <div class="protocol-slot" id="protocol-slot">
+                <div class="protocol-slot-head">
+                  <div><strong>项目协议槽</strong><span>固定 PROTOCOL、评测规范和长期背景。</span></div>
+                  <div class="button-row protocol-slot-actions">
+                    <label class="form-switch protocol-slot-switch"><input type="checkbox" id="protocol-slot-enabled" checked /><span>自动注入</span></label>
+                    <button class="button ghost small" id="add-protocol-files">固定文件</button>
+                    <button class="button ghost small" id="open-protocol-folder">打开目录</button>
+                    <button class="button ghost small" id="clear-protocol-files" disabled>清空</button>
+                  </div>
+                </div>
+                <div id="protocol-slot-files" class="protocol-slot-files"><span class="council-context-empty">协议槽为空。</span></div>
+              </div>
+              <div class="council-context-divider"></div>
+              <div class="council-context-head">
+                <div><strong>本轮临时附件</strong><span>只影响本轮，优先级高于常驻协议。</span></div>
+                <button class="button ghost small" id="add-council-attachments">添加附件</button>
+              </div>
+              <div id="council-attachments" class="council-attachments"><span class="council-context-empty">尚未添加材料</span></div>
+            </div>
+          </details>
+
+          <details class="research-v2-tool council-memory-card" id="council-memory-card">
+            <summary class="council-memory-summary"><span><strong>Research Memory</strong><small>下一轮继承的压缩研究状态</small></span><span id="council-memory-status">尚未生成</span></summary>
+            <div id="council-memory-output" class="council-memory-output empty-state">任务结束后生成。</div>
+          </details>
+
+          <details class="research-v2-tool council-history-card">
+            <summary><span><strong>Council 历史</strong><small>历史 Expert Council 会议与决策</small></span><span>查看</span></summary>
+            <div class="research-v2-tool-body">
+              <div class="research-v2-tool-actions"><button class="icon-button" id="refresh-council-history">↻</button></div>
+              <div id="council-history" class="council-history"><div class="empty-state">暂无运行记录。</div></div>
+            </div>
+          </details>
+
+          <details class="research-v2-tool swarm-history-card">
+            <summary><span><strong>Swarm 历史</strong><small>Quick / Research Swarm / A/B 完整运行记录</small></span><span>查看</span></summary>
+            <div class="research-v2-tool-body">
+              <div class="research-v2-tool-actions"><button class="icon-button" id="refresh-swarm-history">↻</button></div>
+              <div id="swarm-history" class="swarm-history"><div class="empty-state">暂无 Swarm 记录。</div></div>
+            </div>
+          </details>
+
+          <details class="research-v2-tool council-output-card">
+            <summary class="council-output-summary"><span><strong>专家发言记录</strong><small>仅用于审计具体发言</small></span><span>查看</span></summary>
+            <div class="council-output-card-body">
+              <div class="research-v2-tool-actions button-row"><button class="copy-button" id="toggle-council-output">展开全部</button><button class="copy-button" id="copy-council-output">复制全部发言</button></div>
+              <div id="council-output" class="council-output"><div class="empty-state">暂无专家发言。</div></div>
+            </div>
+          </details>
+
+          <details class="research-v2-tool council-roster-card">
+            <summary class="council-roster-summary"><span><strong>席位说明</strong><small>Expert Council 的九个角色</small></span><span>查看</span></summary>
+            <div class="agent-roster">
+              <div><strong>Theory Innovator</strong><small>新目标、新表征、新机制</small></div>
+              <div><strong>Geometry Expert</strong><small>3D 几何与空间一致性</small></div>
+              <div><strong>Semantic Expert</strong><small>语义与开放词汇</small></div>
+              <div><strong>Training Architect</strong><small>多任务冲突与训练策略</small></div>
+              <div><strong>Experiment Designer</strong><small>协议、指标、消融与证伪</small></div>
+              <div><strong>Literature Scout</strong><small>相关工作与新颖性风险审查</small></div>
+              <div><strong>Cross-domain Wildcard</strong><small>跨领域机制迁移</small></div>
+              <div><strong>Top Conference Reviewer</strong><small>顶会反方与新颖性审计</small></div>
+              <div><strong>Principal Investigator</strong><small>候选方向排序与组合</small></div>
+            </div>
+          </details>
+
+          <details class="research-v2-tool council-config-card">
+            <summary class="council-config-summary"><span><strong>高级设置</strong><small>Runtime Profile 与 Council 席位配置</small></span><span>配置</span></summary>
+            <div class="research-v2-tool-body">
+              <div class="runtime-profile-panel">
+                <div class="runtime-profile-head"><div><strong>Research Runtime Profile</strong><span>Quick / Swarm / Council 共用能力档位。</span></div><label class="form-switch"><input type="checkbox" id="runtime-shared-council" checked /><span>同步到 Council</span></label></div>
+                <div id="runtime-profile-config" class="runtime-profile-config"></div>
+                <div class="button-row runtime-profile-actions"><button class="button ghost small" id="reset-runtime-profile">恢复默认档位</button><button class="button primary small" id="save-runtime-profile">保存 Runtime Profile</button></div>
+              </div>
+              <div class="council-seats-head">
+                <div><strong>Expert Council 席位</strong><small>同步开启时只需管理席位启用状态；关闭同步后可展开单席覆盖 Provider / Model / Search / Fallback。</small></div>
+                <div class="button-row"><button class="button ghost small" id="reset-council-config">恢复 Council 默认</button><button class="button primary small" id="save-council-config">保存 Council 配置</button></div>
+              </div>
+              <div id="council-role-config" class="council-role-config"><div class="empty-state">正在读取角色配置…</div></div>
+            </div>
+          </details>
+
+          <details class="research-v2-tool swarm-lab-shell">
+            <summary class="swarm-lab-summary"><span><strong>AAR Scaffold A/B</strong><small>仅用于评测科研 scaffold，不是日常研究模式</small></span><span>评测</span></summary>
+            <div class="research-v2-tool-body swarm-lab-card" id="swarm-lab-card">
+              <div class="research-v2-tool-head"><div><strong>抗趋同 A/B 验证</strong><small>Undirected baseline vs Directed swarm</small></div><span class="grounding-badge" id="swarm-run-state">等待验证</span></div>
+              <div class="swarm-actions"><button class="button primary" id="run-swarm-ab">运行 A/B 验证</button><button class="button ghost" id="cancel-swarm" disabled>终止 Swarm</button><button class="button ghost" id="open-swarm-report" disabled>打开 A/B 报告</button><span class="hint">只验证 scaffold 的抗趋同效果。</span></div>
+              <div class="swarm-flow" id="swarm-flow">
+                <div class="swarm-flow-node" data-swarm-stage="direction-design"><strong>方向设计</strong><small>seeds</small></div><span>›</span>
+                <div class="swarm-flow-node" data-swarm-stage="baseline-proposals"><strong>Baseline</strong><small>blind</small></div><span>›</span>
+                <div class="swarm-flow-node" data-swarm-stage="directed-proposals"><strong>Directed</strong><small>blind</small></div><span>›</span>
+                <div class="swarm-flow-node" data-swarm-stage="diversity-audit"><strong>盲审</strong><small>entropy</small></div><span>›</span>
+                <div class="swarm-flow-node" data-swarm-stage="finding-forum"><strong>Forum</strong><small>branch</small></div><span>›</span>
+                <div class="swarm-flow-node" data-swarm-stage="swarm-decision"><strong>PI</strong><small>keep / kill</small></div>
+              </div>
+              <div class="swarm-metrics-grid">
+                <div class="swarm-metric-head"><span>指标</span><span>Undirected</span><span>Directed</span><span>Δ</span></div>
+                <div class="swarm-metric-row"><strong>Family entropy</strong><span id="swarm-base-entropy">—</span><span id="swarm-dir-entropy">—</span><span id="swarm-delta-entropy">—</span></div>
+                <div class="swarm-metric-row"><strong>Unique mechanisms</strong><span id="swarm-base-mechanisms">—</span><span id="swarm-dir-mechanisms">—</span><span id="swarm-delta-mechanisms">—</span></div>
+                <div class="swarm-metric-row"><strong>Pair collision</strong><span id="swarm-base-collision">—</span><span id="swarm-dir-collision">—</span><span id="swarm-delta-collision">—</span></div>
+                <div class="swarm-metric-row"><strong>Effective hypotheses ≥7</strong><span id="swarm-base-effective">—</span><span id="swarm-dir-effective">—</span><span id="swarm-delta-effective">—</span></div>
+                <div class="swarm-metric-row"><strong>Proposal quality proxy</strong><span id="swarm-base-quality">—</span><span id="swarm-dir-quality">—</span><span id="swarm-delta-quality">—</span></div>
+              </div>
+              <div class="swarm-verdict" id="swarm-verdict">运行后这里会显示 Directed scaffold 是否更抗 idea collapse。</div>
+              <div class="swarm-directions" id="swarm-directions"></div>
+              <details class="swarm-details" id="swarm-decision-details"><summary>Swarm PI 决策</summary><div id="swarm-decision-output" class="swarm-decision-output empty-state">尚未运行。</div></details>
+            </div>
+          </details>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script src="renderer.js"></script>
+</body>
+</html>

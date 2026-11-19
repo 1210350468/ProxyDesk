@@ -1,0 +1,48 @@
+{
+  "name": "proxydesk",
+  "version": "1.14.5",
+  "description": "Windows desktop manager for AGY CLI, Google accounts, local AI providers and research workflows.",
+  "type": "module",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win portable",
+    "check:gemini": "node scripts/check-gemini-accounts.mjs --completion",
+    "check:claude": "node scripts/check-gemini-claude.mjs",
+    "check:account-routing": "node scripts/check-account-routing.mjs",
+    "check:agy-launch": "node scripts/check-agy-launch.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.32.2",
+    "express": "5.3.0",
+    "express-rate-limit": "^8.7.4",
+    "http-proxy-middleware": "^4.2.2",
+    "mammoth": "1.13.0",
+    "pdf-parse": "2.4.5",
+    "yaml": "latest",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "electron": "45.3.4",
+    "electron-builder": "26.18.0"
+  },
+  "build": {
+    "appId": "local.proxydesk.app",
+    "productName": "ProxyDesk",
+    "asar": false,
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "scripts/**/*",
+      "assets/**/*",
+      "package.json"
+    ],
+    "win": {
+      "icon": "assets/icon.ico",
+      "target": "portable",
+      "artifactName": "ProxyDesk-${version}-portable.${ext}"
+    }
+  }
+}
