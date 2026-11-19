@@ -351,6 +351,19 @@ async function refreshAgyAccounts() {
   }
 }
 
+async function refreshAgyRuntime() {
+  const status = $('agy-runtime-status');
+  try {
+    const runtime = await api.getAgyRuntime();
+    $('agy-launch').textContent = runtime.agyInstalled ? '启动 AGY' : '安装并启动 AGY';
+    status.textContent = runtime.agyInstalled
+      ? '已集成 AntiGravity Switch · AGY CLI 已安装'
+      : '已集成 AntiGravity Switch · 点击「安装并启动 AGY」将自动下载安装 Google 官方 CLI';
+  } catch (error) {
+    status.textContent = `账号管理器运行环境异常：${error.message}`;
+  }
+}
+
 function renderGeminiAccounts() {
   const container = $('gemini-account-list');
   if (!state.geminiAccounts.length) {
@@ -2246,7 +2259,7 @@ $('agy-choose-workspace').addEventListener('click', async () => {
 $('agy-launch').addEventListener('click', async () => {
   const button = $('agy-launch');
   button.disabled = true;
-  $('agy-launch-status').textContent = '正在启动 AGY…';
+  $('agy-launch-status').textContent = '正在检查 AGY，首次运行会下载并安装官方 CLI…';
   try {
     const result = await api.launchAgy({
       cwd: $('agy-workspace').value,
@@ -2258,6 +2271,7 @@ $('agy-launch').addEventListener('click', async () => {
     $('agy-launch-status').textContent = `已在 ${result.cwd} 打开 AGY ${modeLabel}终端。`;
     log(`AGY 已启动：${modeLabel} · ${result.cwd}`);
     toast(`AGY 已启动：${modeLabel}`);
+    await refreshAgyRuntime();
   } catch (error) {
     $('agy-launch-status').textContent = `启动失败：${error.message}`;
     toast(`AGY 启动失败：${error.message}`, true);
@@ -2272,7 +2286,10 @@ $('agy-switch-manage').addEventListener('click', async () => {
   } catch (error) { toast(`打开账号管理器失败：${error.message}`, true); }
 });
 window.addEventListener('focus', () => {
-  if (state.page === 'gemini') void refreshAgyAccounts();
+  if (state.page === 'gemini') {
+    void refreshAgyAccounts();
+    void refreshAgyRuntime();
+  }
 });
 $('agy-switch-accounts').addEventListener('click', async (event) => {
   const button = event.target.closest('[data-agy-switch]');
@@ -2285,6 +2302,7 @@ $('agy-switch-accounts').addEventListener('click', async (event) => {
     log(`AGY 登录账号已切换：${result.account}`);
     toast(`AGY 已切换到 ${result.account}`);
     await refreshAgyAccounts();
+    await refreshAgyRuntime();
     $('agy-switch-status').textContent = `已切换到 ${result.account}。新启动的 AGY 命令行将使用该账号。`;
   } catch (error) {
     $('agy-switch-status').textContent = `切换失败：${error.message}`;
@@ -2787,6 +2805,7 @@ async function bootstrap() {
     resetCouncilLiveMap();
     resetSwarmPanel();
     await refreshAgyAccounts();
+    await refreshAgyRuntime();
     await loadConnectionInfo();
     await Promise.all([refreshStatus(), refreshQuota(), refreshGeminiAccounts(), refreshFriendGateway(), refreshCodexSessions(), refreshCouncilStatus(), refreshCouncilHistory(), refreshSwarmHistory(), refreshProjectProtocol()]);
     await refreshModels();

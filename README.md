@@ -4,23 +4,26 @@ Windows 桌面 AI 工具控制台，提供 AGY CLI 账号切换、项目会话�
 
 ## 功能
 
-- **AGY CLI**：显示 AntiGravity Switch 中保存的账号，点击按钮切换后续 AGY CLI 会话使用的账号。
+- **AGY CLI**：随安装包内置 AntiGravity Switch 4.10.18 的账号管理界面和 CLI，导入账号后点击按钮切换后续 AGY CLI 会话使用的账号。
 - **一键启动 AGY**：选择工作目录，开始新会话、继续最近会话或通过会话 ID 恢复历史会话。AGY 终端的 `/resume` 命令可浏览历史对话。
 - **Gemini 多账号**：连接本机 CLIProxyAPI，管理 Google OAuth 授权、订阅等级和模型额度。
 - **模型 API**：查看已配置的代理服务、API 地址和可用模型；支持本地搜索 HTTP/MCP 接口。
 - **朋友 API**：在用户配置自己的 HTTPS 访问地址后，创建独立密钥和账号路由。
 - **科研工作台**：Quick、Swarm、Expert Council、研究记录及 AsterBridge 集成。
 
-AGY CLI 的**手动账号切换**已接入 ProxyDesk。自动额度监控与账号切换策略由 AntiGravity Switch 自己管理；ProxyDesk 当前尚无自动策略配置页面。CPA 接口的自动分配是另一套独立功能。
+AGY CLI 的**手动账号切换**已接入 ProxyDesk。自动额度监控与账号切换策略由内置 AntiGravity Switch 桌面管理器管理。需要自动切换时，在「添加或导入账号」打开的管理器中启用智能切换，保持管理器的后台调度运行。CPA 接口的自动分配是另一套独立功能。
 
 ## Windows 安装
 
-1. 从 [Releases](../../releases) 下载 `ProxyDesk-1.14.5-portable.exe` 并运行，或使用源码执行 `npm ci`、`npm start`。
-2. 使用 AGY 功能前，请安装 AGY CLI 和 AntiGravity Switch；分别确认 `%LOCALAPPDATA%\agy\bin\agy.exe` 和 `%LOCALAPPDATA%\agy-switch\agy-switch.exe` 存在。
-3. 打开「Gemini 账号」页面，在「一键切换 AGY 账号」区域导入自己的 Google 账号。
-4. 选择账号，设置工作目录与对话方式，点击「启动 AGY」。系统使用 Windows Terminal 打开新的交互式终端。
+1. 从 [Releases](../../releases) 下载 `ProxyDesk-1.15.0-portable.exe` 并运行，或使用源码执行 `npm ci`、`npm start`。
+2. 打开「Gemini 账号」页面，在「一键切换 AGY 账号」区域导入自己的 Google 账号。账号管理器随 ProxyDesk 自带，首次使用无需单独安装 AntiGravity Switch。
+3. 选择账号，设置工作目录与对话方式，点击「启动 AGY」。首次使用时，ProxyDesk 会通过 Google 官方安装程序自动下载安装 AGY CLI，随后在 Windows Terminal 中启动会话。
 
-AGY 账号授权由本机 AntiGravity Switch 管理。AGY CLI 和 AntiGravity Switch 均为独立安装的软件，本项目没有打包它们的安装程序或 Google 登录凭据。
+AGY 账号授权存放在当前用户的本地目录。软件不预置 Google 登录凭据，用户使用各自账号登录。
+
+### 第三方组件许可证
+
+安装包自带的 AntiGravity Switch 4.10.18 属于第三方软件，遵循 **CC BY-NC-SA 4.0**，包括非商业性使用条款；上游项目与发行说明见 [组件署名与许可证](vendor/agy-switch/NOTICE.md)。ProxyDesk 自有源码使用 MIT 许可证。Google 官方 AGY CLI 通过 Google 的安装程序下载。
 
 ## 外部服务配置
 
@@ -31,7 +34,7 @@ AGY CLI 相关功能可以独立使用。Gemini API、网页代理、AsterBridge
 ```text
 Apps/
   ProxyDesk/
-    ProxyDesk-1.14.5-portable.exe
+    ProxyDesk-1.15.0-portable.exe
   AntigravityProxy/
   GeminiWebProxy/
 ```
@@ -49,14 +52,14 @@ Apps/
 
 ```powershell
 $env:PROXYDESK_SERVICES_ROOT = 'D:\Apps'
-& 'D:\Apps\ProxyDesk\ProxyDesk-1.14.5-portable.exe'
+& 'D:\Apps\ProxyDesk\ProxyDesk-1.15.0-portable.exe'
 ```
 
 使用朋友 API 时，还需要为自己的域名配置 HTTPS 反向代理，将 `/api` 转发至本机的 `127.0.0.1:8338`。访问密钥必须由当前设备中的 ProxyDesk 单独生成。
 
 ## 从源码运行与构建
 
-要求：Windows、Node.js、npm；AGY 终端启动使用 Windows Terminal。
+要求：Windows x64、Node.js、npm；AGY 终端启动使用 Windows Terminal，账号管理桌面界面使用 WebView2。
 
 ```powershell
 npm ci

@@ -16,6 +16,7 @@ contextBridge.exposeInMainWorld('proxyDesk', {
   switchAgyAccount: (accountId) => ipcRenderer.invoke('agy:switch', accountId),
   openAgyManager: () => ipcRenderer.invoke('agy:open-manager'),
   launchAgy: (options) => ipcRenderer.invoke('agy:launch', options),
+  getAgyRuntime: () => ipcRenderer.invoke('agy:runtime'),
   getFriendGateway: () => ipcRenderer.invoke('friend:status'),
   enableFriendGateway: (enabled) => ipcRenderer.invoke('friend:enable', enabled),
   createFriendClient: (config) => ipcRenderer.invoke('friend:create', config),

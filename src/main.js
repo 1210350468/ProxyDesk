@@ -76,8 +76,12 @@ const geminiAccounts = createGeminiAccounts({
 });
 
 const agySwitch = createAgySwitch({
-  installDirectory: path.join(process.env.LOCALAPPDATA || '', 'agy-switch'),
-  agyExecutablePath: path.join(process.env.LOCALAPPDATA || '', 'agy', 'bin', 'agy.exe')
+  installDirectory: path.join(app.getPath('userData'), 'tools', 'agy-switch', '4.10.18'),
+  bundledDirectory: app.isPackaged
+    ? path.join(process.resourcesPath, 'agy-switch')
+    : path.join(projectRoot, 'vendor', 'agy-switch'),
+  agyExecutablePath: path.join(process.env.LOCALAPPDATA || '', 'agy', 'bin', 'agy.exe'),
+  downloadDirectory: path.join(paths.run, 'agy-installer')
 });
 
 const accountRouter = createAccountRouter({
@@ -2124,6 +2128,7 @@ function registerIpc() {
   ipcMain.handle('agy:switch', async (_event, accountId) => agySwitch.switchAccount(accountId));
   ipcMain.handle('agy:open-manager', async () => agySwitch.openManager());
   ipcMain.handle('agy:launch', async (_event, options) => agySwitch.launchAgy(options));
+  ipcMain.handle('agy:runtime', async () => agySwitch.getRuntimeStatus());
   ipcMain.handle('friend:status', async () => friendGateway.status());
   ipcMain.handle('friend:enable', async (_event, enabled) => friendGateway.setEnabled(enabled));
   ipcMain.handle('friend:create', async (_event, config) => friendGateway.createClient(config));

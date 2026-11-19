@@ -7,10 +7,15 @@ const localAppData = process.env.LOCALAPPDATA;
 assert.ok(localAppData, '缺少 LOCALAPPDATA');
 
 const manager = createAgySwitch({
-  installDirectory: path.join(localAppData, 'agy-switch'),
-  agyExecutablePath: path.join(localAppData, 'agy', 'bin', 'agy.exe')
+  installDirectory: path.resolve(process.cwd(), '.local-check', 'agy-switch-installed'),
+  bundledDirectory: path.resolve(process.env.PROXYDESK_AGY_SWITCH_DIR || path.join(process.cwd(), 'vendor', 'agy-switch')),
+  agyExecutablePath: path.join(localAppData, 'agy', 'bin', 'agy.exe'),
+  downloadDirectory: path.resolve(process.cwd(), '.local-check', 'agy-installer')
 });
 
+const runtime = await manager.getRuntimeStatus();
+assert.equal(runtime.switchBundled, true, '应包含账号管理器和桌面程序');
+assert.equal(runtime.agyInstalled, true, '本机应已安装官方 AGY CLI');
 const accounts = await manager.listAccounts();
 assert.ok(Array.isArray(accounts.accounts), '账号列表应返回数组');
 

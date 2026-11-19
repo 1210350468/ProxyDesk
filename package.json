@@ -1,6 +1,6 @@
 {
   "name": "proxydesk",
-  "version": "1.14.5",
+  "version": "1.15.0",
   "description": "Windows desktop manager for AGY CLI, Google accounts, local AI providers and research workflows.",
   "type": "module",
   "main": "src/main.js",
@@ -38,6 +38,13 @@
       "scripts/**/*",
       "assets/**/*",
       "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "vendor/agy-switch",
+        "to": "agy-switch",
+        "filter": ["agy-switch.exe", "agy-switch-desktop.exe", "LICENSE", "NOTICE.md"]
+      }
     ],
     "win": {
       "icon": "assets/icon.ico",
