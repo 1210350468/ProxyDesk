@@ -1,91 +1,160 @@
-# ProxyDesk
+<div align="center">
 
-Windows 桌面 AI 工具控制台，提供 AGY CLI 账号切换、项目会话启动、Gemini 账号管理、模型接口管理和多角色科研工作流程。使用 Electron 开发，界面以中文为主。
+<img src="assets/readme-banner.svg" alt="ProxyDesk | Your AI tools. One desktop." width="100%" />
 
-## 功能
+<p><strong>一个桌面入口，管理 AGY 账号、启动 AI CLI、连接模型接口、组织自动科研。</strong></p>
 
-- **AGY CLI**：随安装包内置 AntiGravity Switch 4.10.18 的账号管理界面和 CLI，导入账号后点击按钮切换后续 AGY CLI 会话使用的账号。
-- **一键启动 AGY**：选择工作目录，开始新会话、继续最近会话或通过会话 ID 恢复历史会话。AGY 终端的 `/resume` 命令可浏览历史对话。
-- **Gemini 多账号**：连接本机 CLIProxyAPI，管理 Google OAuth 授权、订阅等级和模型额度。
-- **模型 API**：查看已配置的代理服务、API 地址和可用模型；支持本地搜索 HTTP/MCP 接口。
-- **朋友 API**：在用户配置自己的 HTTPS 访问地址后，创建独立密钥和账号路由。
-- **科研工作台**：Quick、Swarm、Expert Council、研究记录及 AsterBridge 集成。
+<p>
+  <a href="https://github.com/1210350468/ProxyDesk/releases/latest"><img src="https://img.shields.io/github/v/release/1210350468/ProxyDesk?style=flat-square&label=Release&color=827BFF" alt="Latest release" /></a>
+  <img src="https://img.shields.io/badge/Windows-x64-1476D4?style=flat-square&logo=windows11&logoColor=white" alt="Windows x64" />
+  <img src="https://img.shields.io/badge/Electron-Desktop-172A46?style=flat-square&logo=electron&logoColor=white" alt="Electron desktop" />
+  <a href="LICENSE"><img src="https://img.shields.io/badge/ProxyDesk-MIT-5A78E2?style=flat-square" alt="ProxyDesk MIT license" /></a>
+  <a href="https://github.com/1210350468/ProxyDesk/stargazers"><img src="https://img.shields.io/github/stars/1210350468/ProxyDesk?style=flat-square&color=8B9EEA" alt="GitHub Stars" /></a>
+</p>
 
-AGY CLI 的**手动账号切换**已接入 ProxyDesk。自动额度监控与账号切换策略由内置 AntiGravity Switch 桌面管理器管理。需要自动切换时，在「添加或导入账号」打开的管理器中启用智能切换，保持管理器的后台调度运行。CPA 接口的自动分配是另一套独立功能。
+<p>
+  <a href="https://github.com/1210350468/ProxyDesk/releases/latest"><img src="https://img.shields.io/badge/⬇_下载_Windows_便携版-6C79F4?style=for-the-badge" alt="下载 Windows 便携版" /></a>
+  <a href="https://github.com/1210350468/ProxyDesk/releases"><img src="https://img.shields.io/badge/查看发布记录-26375A?style=for-the-badge" alt="查看发布记录" /></a>
+</p>
 
-## Windows 安装
+<p>
+  <a href="#-核心功能">核心功能</a> ·
+  <a href="#-三步开始使用">快速开始</a> ·
+  <a href="#-运行环境与组件">运行环境</a> ·
+  <a href="#-开发与构建">开发与构建</a> ·
+  <a href="#-许可证与致谢">许可证</a>
+</p>
 
-1. 从 [Releases](../../releases) 下载 `ProxyDesk-1.15.0-portable.exe` 并运行，或使用源码执行 `npm ci`、`npm start`。
-2. 打开「Gemini 账号」页面，在「一键切换 AGY 账号」区域导入自己的 Google 账号。账号管理器随 ProxyDesk 自带，首次使用无需单独安装 AntiGravity Switch。
-3. 选择账号，设置工作目录与对话方式，点击「启动 AGY」。首次使用时，ProxyDesk 会通过 Google 官方安装程序自动下载安装 AGY CLI，随后在 Windows Terminal 中启动会话。
+</div>
 
-AGY 账号授权存放在当前用户的本地目录。软件不预置 Google 登录凭据，用户使用各自账号登录。
+## ✨ 核心功能
 
-### 第三方组件许可证
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <strong>🔄 AGY 多账号管理</strong><br />
+      内置 <strong>AntiGravity Switch 4.10.18</strong>。添加 Google 账号、查看账号列表、手动切换 AGY 登录身份；通过内置管理器配置智能切换。
+    </td>
+    <td width="50%" valign="top">
+      <strong>🚀 AGY 一键启动与会话恢复</strong><br />
+      选择项目工作目录，启动新对话、继续最近对话，或通过会话 ID 恢复历史对话。首次使用时支持自动安装 Google 官方 AGY CLI。
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <strong>💠 Gemini 账号与额度</strong><br />
+      连接本机 CLIProxyAPI，管理 Google OAuth 账号，查看订阅等级、模型列表和额度信息。
+    </td>
+    <td width="50%" valign="top">
+      <strong>🔌 本地 AI API 控制台</strong><br />
+      集中查看模型接口，管理客户端 API Key、账号分配方式，以及搜索 HTTP / MCP 服务。
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <strong>🧠 多角色自动科研</strong><br />
+      Quick、Swarm、Expert Council 工作流程，包含任务进度、研究记录与 AsterBridge 集成。
+    </td>
+    <td width="50%" valign="top">
+      <strong>🖥️ 中文桌面操作</strong><br />
+      Electron 桌面界面集中提供账号、工作目录、启动方式与服务状态操作。
+    </td>
+  </tr>
+</table>
 
-安装包自带的 AntiGravity Switch 4.10.18 属于第三方软件，遵循 **CC BY-NC-SA 4.0**，包括非商业性使用条款；上游项目与发行说明见 [组件署名与许可证](vendor/agy-switch/NOTICE.md)。ProxyDesk 自有源码使用 MIT 许可证。Google 官方 AGY CLI 通过 Google 的安装程序下载。
+## 🚀 三步开始使用
 
-## 外部服务配置
+1. **下载安装。** 进入 [最新版本页面](https://github.com/1210350468/ProxyDesk/releases/latest)，下载 `ProxyDesk-1.15.0-portable.exe` 并打开。
+2. **导入账号。** 进入「Gemini 账号」→「一键切换 AGY 账号」，点击「添加或导入账号」，使用自己的 Google 账号完成授权。
+3. **启动项目。** 选择账号与工作目录，然后点击「启动 AGY」。程序检测 Google AGY CLI 的安装状态，首次使用时自动下载安装，并通过 Windows Terminal 打开交互式会话。
 
-AGY CLI 相关功能可以独立使用。Gemini API、网页代理、AsterBridge 和朋友 API 功能需要分别安装相应服务。
+<p align="center"><strong>一个下载入口 · 内置账号管理器 · 自己的 Google 账号 · 指定目录开始工作</strong></p>
 
-默认查找便携版执行文件所在目录的同级目录：
+### 选择对话方式
 
-```text
-Apps/
-  ProxyDesk/
-    ProxyDesk-1.15.0-portable.exe
-  AntigravityProxy/
-  GeminiWebProxy/
+| 操作 | 使用场景 |
+| --- | --- |
+| **开始新对话** | 在指定项目目录启动全新的 AGY 会话 |
+| **继续最近对话** | 从该目录恢复最近一次会话，使用 `agy --continue` |
+| **恢复指定会话** | 输入会话 ID，使用 `agy --conversation <会话ID>` |
+| **浏览历史对话** | 在 AGY 终端使用 `/resume` 搜索并选择历史会话 |
+
+### 账号切换如何工作
+
+```mermaid
+flowchart LR
+    A[ProxyDesk 桌面界面] --> B[内置 AntiGravity Switch]
+    B --> C[选择 Google 账号]
+    C --> D[启动 AGY CLI]
+    D --> E[项目目录与历史会话]
 ```
 
-也可以在启动 ProxyDesk 前设置环境变量：
+AGY 手动账号切换由 ProxyDesk 调用内置管理器完成。需要自动切换时，可以在 AntiGravity Switch 的设置中启用智能切换，并保持其桌面调度器运行。CPA 模型 API 的自动账号分配独立配置。
 
-| 环境变量 | 用途 |
+## 🧩 运行环境与组件
+
+| 组件 | 获取方式 | 对应功能 |
+| --- | --- | --- |
+| **ProxyDesk** | 下载一个 Windows x64 便携程序 | 统一桌面入口 |
+| **AntiGravity Switch 4.10.18** | **已经包含在便携版内** | 账号管理、切换与智能切换设置 |
+| **Google AGY CLI** | 首次启动时调用 Google 官方安装程序 | AGY 交互式会话 |
+| **Windows Terminal** | Windows 系统应用 | 显示 AGY 交互式终端 |
+| **WebView2** | Windows 运行环境 | 显示 AntiGravity Switch 桌面界面 |
+| **CLIProxyAPI / AsterBridge 等** | 根据使用功能单独配置 | 模型接口、网页代理、科研任务 |
+
+<details>
+<summary><strong>⚙️ 外部服务路径与 HTTPS 配置</strong></summary>
+
+AGY 账号管理与启动功能可以独立使用。其他服务的默认路径由 ProxyDesk 安装目录的同级目录确定，也可以在启动前配置以下环境变量：
+
+| 环境变量 | 功能 |
 | --- | --- |
-| `PROXYDESK_SERVICES_ROOT` | `AntigravityProxy`、`GeminiWebProxy` 的共同上级目录 |
-| `PROXYDESK_CPA_ROOT` | 单独指定 CLIProxyAPI / AntigravityProxy 目录 |
-| `PROXYDESK_WEB_ROOT` | 单独指定 GeminiWebProxy 目录 |
-| `PROXYDESK_PUBLIC_BASE_URL` | 自己的 HTTPS 朋友 API 地址，格式如 `https://设备域名/api/v1` |
+| `PROXYDESK_SERVICES_ROOT` | AntigravityProxy、GeminiWebProxy 的共同上级目录 |
+| `PROXYDESK_CPA_ROOT` | 单独指定 CLIProxyAPI / AntigravityProxy 安装目录 |
+| `PROXYDESK_WEB_ROOT` | 单独指定 GeminiWebProxy 安装目录 |
+| `PROXYDESK_PUBLIC_BASE_URL` | 自己的 HTTPS 朋友 API 地址，如 `https://your-host.example/api/v1` |
 
-例如在 PowerShell 中启动：
+例如：
 
 ```powershell
 $env:PROXYDESK_SERVICES_ROOT = 'D:\Apps'
 & 'D:\Apps\ProxyDesk\ProxyDesk-1.15.0-portable.exe'
 ```
 
-使用朋友 API 时，还需要为自己的域名配置 HTTPS 反向代理，将 `/api` 转发至本机的 `127.0.0.1:8338`。访问密钥必须由当前设备中的 ProxyDesk 单独生成。
+朋友 API 通过配置自己的 HTTPS 反向代理，将 `/api` 转发至本机 `127.0.0.1:8338`。详情见 [API 管理文档](docs/API-MANAGEMENT.md)。
 
-## 从源码运行与构建
+</details>
 
-要求：Windows x64、Node.js、npm；AGY 终端启动使用 Windows Terminal，账号管理桌面界面使用 WebView2。
+## 🛠️ 开发与构建
+
+开发环境：Windows x64、Node.js、npm。
 
 ```powershell
+git clone https://github.com/1210350468/ProxyDesk.git
+cd ProxyDesk
 npm ci
 npm start
 ```
 
-生成 Windows 便携版：
+生成便携版及运行 AGY 真实启动检查：
 
 ```powershell
 npm run dist
-```
-
-本机有 AGY CLI 与 AntiGravity Switch 时，可执行真实启动检查：
-
-```powershell
 npm run check:agy-launch
 ```
 
-该命令会启动一个测试 AGY 会话，验证终端窗口，并关闭测试创建的 AGY 进程。其他需要实际模型 API 的脚本将使用当前设备的授权和网络环境。
+检查命令会使用当前设备的 AGY 环境启动测试会话，验证终端窗口后关闭测试创建的 AGY 进程。需要实际模型 API 的其他测试使用本机授权与代理服务。
 
-## 数据与安全
+## 🔐 数据与许可证
 
-个人 Google 登录状态、代理授权、API Key、运行日志和研究记录存放在用户设备中。GitHub 仓库只包含公开源码、图标、说明文档和开发脚本。请勿提交个人凭据、`.env`、本地代理配置或运行数据。
+Google 登录状态、API Key、运行日志与研究记录由当前设备保存。提交源码时请排除个人凭据、`.env`、本地代理配置和运行数据。
 
-更多连接说明见 [API 管理文档](docs/API-MANAGEMENT.md)。
+**ProxyDesk 自有源码**使用 [MIT 许可证](LICENSE)。内置的 **AntiGravity Switch 4.10.18** 来自 [anglee0323/agy-switch](https://github.com/anglee0323/agy-switch)，遵循 **CC BY-NC-SA 4.0**（署名、非商业性使用、相同方式共享），其 [原始许可证与署名](vendor/agy-switch/NOTICE.md) 随程序提供。Google AGY CLI 由 Google 官方安装程序下载。
 
-## 许可证
+<div align="center">
 
-[MIT](LICENSE)
+<sub>Made for a more connected AI desktop ✦</sub>
+
+<p><a href="https://github.com/1210350468/ProxyDesk/releases/latest">下载最新版本</a> · <a href="https://github.com/1210350468/ProxyDesk/issues">提交问题</a> · <a href="https://github.com/1210350468/ProxyDesk/stargazers">Star on GitHub ⭐</a></p>
+
+</div>

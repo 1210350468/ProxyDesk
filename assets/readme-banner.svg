@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 340" role="img" aria-labelledby="title desc">
+  <title id="title">ProxyDesk</title>
+  <desc id="desc">ProxyDesk 品牌展示图，深色背景配紫蓝色光环，提供 AI 工具统一入口</desc>
+  <defs>
+    <linearGradient id="surface" x1="0" y1="0" x2="1200" y2="340" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B1020"/>
+      <stop offset="0.56" stop-color="#121A37"/>
+      <stop offset="1" stop-color="#0C1026"/>
+    </linearGradient>
+    <linearGradient id="beam" x1="713" y1="28" x2="1044" y2="313" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#A5DAFF"/>
+      <stop offset="0.53" stop-color="#919CFF"/>
+      <stop offset="1" stop-color="#C1A0FF"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientTransform="translate(920 165) rotate(90) scale(240 300)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#5767E0" stop-opacity="0.34"/>
+      <stop offset="1" stop-color="#5767E0" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blur"><feGaussianBlur stdDeviation="20"/></filter>
+    <clipPath id="bounds"><rect width="1200" height="340" rx="24"/></clipPath>
+  </defs>
+  <g clip-path="url(#bounds)">
+    <rect width="1200" height="340" fill="url(#surface)"/>
+    <path d="M0 272C150 244 227 312 408 272S718 240 1200 308" fill="none" stroke="#728DF7" opacity=".08" stroke-width="1.5"/>
+    <path d="M0 242C163 214 237 282 420 242S732 210 1200 278" fill="none" stroke="#728DF7" opacity=".07" stroke-width="1.5"/>
+    <rect x="665" y="-55" width="525" height="455" fill="url(#glow)"/>
+    <circle cx="933" cy="168" r="137" fill="none" stroke="#8F9DFF" stroke-opacity=".17" stroke-width="1.5"/>
+    <circle cx="933" cy="168" r="105" fill="none" stroke="#B1C5FF" stroke-opacity=".17" stroke-width="1.5" stroke-dasharray="4 9"/>
+    <circle cx="933" cy="168" r="79" fill="none" stroke="url(#beam)" stroke-width="15" stroke-opacity=".22" filter="url(#blur)"/>
+    <circle cx="933" cy="168" r="79" fill="none" stroke="url(#beam)" stroke-width="13" stroke-dasharray="152 344" stroke-linecap="round" transform="rotate(36 933 168)"/>
+    <circle cx="933" cy="168" r="79" fill="none" stroke="#A8BFFF" stroke-width="11" stroke-dasharray="99 397" stroke-linecap="round" transform="rotate(216 933 168)"/>
+    <circle cx="933" cy="168" r="59" fill="#111A35" stroke="#5366B4" stroke-opacity=".55" stroke-width="1.5"/>
+    <path d="M910 134h29c23 0 37 12 37 32s-15 32-38 32h-8v24h-20v-88zm20 17v30h9c11 0 17-6 17-15s-6-15-17-15h-9z" fill="#F7F9FF"/>
+    <circle cx="822" cy="240" r="8" fill="#C8E7FF"/>
+    <circle cx="1020" cy="136" r="7" fill="#9AABFF"/>
+    <circle cx="877" cy="55" r="5" fill="#B1A3FA"/>
+    <circle cx="1056" cy="245" r="5" fill="#B1A3FA"/>
+    <path d="M822 240L770 258M1020 136l65-37M877 55l-39-24M1056 245l44 29" stroke="#9FABF5" stroke-opacity=".48" stroke-width="1.5"/>
+    <rect x="62" y="48" width="172" height="32" rx="16" fill="#242E54" stroke="#53639B" stroke-opacity=".55"/>
+    <circle cx="82" cy="64" r="5" fill="#99DCFD"/>
+    <text x="97" y="69" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="600" letter-spacing="1.7" fill="#C8D7FF">WINDOWS DESKTOP</text>
+    <text x="60" y="166" font-family="Segoe UI, Arial, sans-serif" font-size="66" font-weight="760" letter-spacing="-2" fill="#F4F7FF">ProxyDesk</text>
+    <text x="63" y="205" font-family="Segoe UI, Arial, sans-serif" font-size="20" fill="#C3CCE8">Your AI tools. One desktop.</text>
+    <path d="M64 232H532" stroke="#596C9F" stroke-opacity=".5"/>
+    <text x="63" y="269" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="600" letter-spacing="1.3" fill="#9CB2EE">AGY CLI</text>
+    <circle cx="153" cy="264" r="3" fill="#687EE0"/>
+    <text x="169" y="269" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="600" letter-spacing="1.3" fill="#9CB2EE">GEMINI</text>
+    <circle cx="265" cy="264" r="3" fill="#687EE0"/>
+    <text x="281" y="269" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="600" letter-spacing="1.3" fill="#9CB2EE">LOCAL API</text>
+    <circle cx="397" cy="264" r="3" fill="#687EE0"/>
+    <text x="413" y="269" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="600" letter-spacing="1.3" fill="#9CB2EE">RESEARCH</text>
+  </g>
+</svg>
