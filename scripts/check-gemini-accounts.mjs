@@ -94,10 +94,15 @@ if (process.argv.includes('--quota')) {
       for (const group of [gemini, thirdParty]) {
         assert.ok(group, `账号 ${account.email} 缺少官方额度分组`);
         assert.ok(group.windows.some((window) => window.windowId === 'weekly' && typeof window.remaining === 'number'));
-        assert.ok(group.windows.some((window) => window.windowId === '5h' && typeof window.remaining === 'number'));
-        console.log(`TOTAL_QUOTA=${account.email} GROUP=${group.name} WEEKLY=${group.windows.find((window) => window.windowId === 'weekly').remaining}% FIVE_HOURS=${group.windows.find((window) => window.windowId === '5h').remaining}%`);
+        assert.ok(group.windows.every((window) => window.remaining === null ||
+          (Number.isFinite(window.remaining) && window.remaining >= 0 && window.remaining <= 100)));
+        console.log(`TOTAL_QUOTA=${account.email} GROUP=${group.name} WEEKLY=${group.windows.find((window) => window.windowId === 'weekly').remaining}% FIVE_HOURS=${group.windows.find((window) => window.windowId === '5h')?.remaining ?? 'not_provided'}`);
       }
-      assert.equal(quota.credits?.name, 'Google One AI 积分', `积分字段未被识别：${account.email}`);
+      if (quota.credits) {
+        assert.equal(quota.credits.name, 'Google One AI 积分', `积分字段未被识别：${account.email}`);
+        assert.ok(quota.credits.remaining === null ||
+          (Number.isFinite(quota.credits.remaining) && quota.credits.remaining >= 0));
+      }
     }
     if (quota.state === 'verification_required') assert.ok(quota.message.length > 0, `Google 验证提示为空：${account.email}`);
     console.log(`QUOTA=${account.email}:${quota.state} GROUPS=${quota.groups.length} AI_CREDITS=${quota.credits?.remaining ?? 'not_provided'}`);

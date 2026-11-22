@@ -82,6 +82,8 @@ const geminiAccounts = createGeminiAccounts({
   openExternal: (url) => shell.openExternal(url)
 });
 
+let antigravityStartPromise = null;
+
 const agySwitch = createAgySwitch({
   installDirectory: path.join(app.getPath('userData'), 'tools', 'agy-switch', '4.10.18'),
   bundledDirectory: app.isPackaged
@@ -515,6 +517,7 @@ async function runPowerShellScript(root, script, extraArgs = []) {
 }
 
 async function fetchModels(provider) {
+  if (provider === 'antigravity') await ensureAntigravityService();
   const info = await getProvider(provider);
   const response = await fetch(`${info.baseUrl}/models`, {
     headers: { Authorization: `Bearer ${info.apiKey}` },
@@ -707,6 +710,7 @@ async function startSearchGateway() {
 
 async function getQuota() {
   try {
+    await ensureAntigravityService();
     const accounts = await geminiAccounts.accounts();
     const account = accounts.find((entry) => !entry.disabled && !entry.unavailable);
     if (!account) return { tierName: '没有可用账号', groups: [] };
@@ -738,6 +742,19 @@ async function startService(id) {
   if (await isPortOpen(service.port)) return `${service.name} is already running.`;
   if (id === 'asterbridge') return asterBridgeResearch.start();
   return runPowerShellScript(service.root, service.startScript);
+}
+
+async function ensureAntigravityService() {
+  if (!antigravityStartPromise) {
+    antigravityStartPromise = (async () => {
+      if (await isPortOpen(services.antigravity.port)) return;
+      await startService('antigravity');
+      if (!await isPortOpen(services.antigravity.port, '127.0.0.1', 1500)) {
+        throw new Error('Antigravity CPA 自动启动后仍无法连接本地管理接口 127.0.0.1:8318');
+      }
+    })().finally(() => { antigravityStartPromise = null; });
+  }
+  await antigravityStartPromise;
 }
 
 async function stopService(id) {
@@ -2172,13 +2189,31 @@ function registerIpc() {
   ipcMain.handle('status:get', async () => serviceStatus());
   ipcMain.handle('models:get', async (_event, provider) => fetchModels(provider));
   ipcMain.handle('quota:get', async () => getQuota());
-  ipcMain.handle('gemini:accounts', async (_event, refreshTier = false) => geminiAccounts.accounts(refreshTier === true));
-  ipcMain.handle('gemini:login', async () => geminiAccounts.startOAuth());
-  ipcMain.handle('gemini:login-status', async (_event, state) => geminiAccounts.oauthStatus(state));
-  ipcMain.handle('gemini:quota', async (_event, name) => geminiAccounts.accountQuota(name));
+  ipcMain.handle('gemini:accounts', async (_event, refreshTier = false) => {
+    await ensureAntigravityService();
+    return geminiAccounts.accounts(refreshTier === true);
+  });
+  ipcMain.handle('gemini:login', async () => {
+    await ensureAntigravityService();
+    return geminiAccounts.startOAuth();
+  });
+  ipcMain.handle('gemini:login-status', async (_event, state) => {
+    await ensureAntigravityService();
+    return geminiAccounts.oauthStatus(state);
+  });
+  ipcMain.handle('gemini:quota', async (_event, name) => {
+    await ensureAntigravityService();
+    return geminiAccounts.accountQuota(name);
+  });
   ipcMain.handle('gemini:open-verification', async (_event, name) => geminiAccounts.openAccountVerification(name));
-  ipcMain.handle('gemini:account-enable', async (_event, name, enabled) => geminiAccounts.setAccountEnabled(name, enabled));
-  ipcMain.handle('gemini:account-remove', async (_event, name) => geminiAccounts.removeAccount(name));
+  ipcMain.handle('gemini:account-enable', async (_event, name, enabled) => {
+    await ensureAntigravityService();
+    return geminiAccounts.setAccountEnabled(name, enabled);
+  });
+  ipcMain.handle('gemini:account-remove', async (_event, name) => {
+    await ensureAntigravityService();
+    return geminiAccounts.removeAccount(name);
+  });
   ipcMain.handle('gemini:launch-claude', async (_event, options) => launchScopedClaude(options));
   ipcMain.handle('agy:accounts', async () => agySwitch.listAccounts());
   ipcMain.handle('agy:switch', async (_event, accountId) => agySwitch.switchAccount(accountId));
@@ -2190,8 +2225,10 @@ function registerIpc() {
   ipcMain.handle('friend:create', async (_event, config) => friendGateway.createClient(config));
   ipcMain.handle('friend:revoke', async (_event, id) => friendGateway.revokeClient(id));
   ipcMain.handle('friend:reveal', async (_event, id) => friendGateway.revealClientKey(id));
-  ipcMain.handle('friend:models', async (_event, force = false) =>
-    (await friendGateway.availableModels(force === true)).map((item) => item.id));
+  ipcMain.handle('friend:models', async (_event, force = false) => {
+    await ensureAntigravityService();
+    return (await friendGateway.availableModels(force === true)).map((item) => item.id);
+  });
   ipcMain.handle('friend:accounts', async () => accountRouter.listAccounts());
   ipcMain.handle('friend:account', async (_event, id, accountName) => friendGateway.setClientAccount(id, accountName));
   ipcMain.handle('connection:get', async () => getConnectionInfo());

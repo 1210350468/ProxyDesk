@@ -100,7 +100,7 @@
 
 ## 🚀 三步开始使用
 
-1. **下载安装。** 进入 [最新版本页面](https://github.com/1210350468/ProxyDesk/releases/latest)，下载 `ProxyDesk-1.15.0-portable.exe` 并打开。
+1. **下载安装。** 进入 [最新版本页面](https://github.com/1210350468/ProxyDesk/releases/latest)，下载 `ProxyDesk-1.15.1-portable.exe` 并打开。
 2. **导入账号。** 进入「Gemini 账号」→「一键切换 AGY 账号」，点击「添加或导入账号」，使用自己的 Google 账号完成授权。
 3. **启动项目。** 选择账号与工作目录，然后点击「启动 AGY」。程序检测 Google AGY CLI 的安装状态，首次使用时自动下载安装，并通过 Windows Terminal 打开交互式会话。
 
@@ -154,7 +154,7 @@ AGY 账号管理与启动功能可以独立使用。其他服务的默认路径�
 
 ```powershell
 $env:PROXYDESK_SERVICES_ROOT = 'D:\Apps'
-& 'D:\Apps\ProxyDesk\ProxyDesk-1.15.0-portable.exe'
+& 'D:\Apps\ProxyDesk\ProxyDesk-1.15.1-portable.exe'
 ```
 
 朋友 API 通过配置自己的 HTTPS 反向代理，将 `/api` 转发至本机 `127.0.0.1:8338`。详情见 [API 管理文档](docs/API-MANAGEMENT.md)。

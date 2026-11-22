@@ -1,6 +1,6 @@
 {
   "name": "proxydesk",
-  "version": "1.15.0",
+  "version": "1.15.1",
   "description": "Windows desktop manager for AGY CLI, Google accounts, local AI providers and research workflows.",
   "type": "module",
   "main": "src/main.js",

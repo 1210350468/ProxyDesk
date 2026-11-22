@@ -53,6 +53,8 @@ export function createGeminiAccounts({ proxyRoot, managementBaseUrl, openExterna
         ...(options.body ? { 'Content-Type': 'application/json' } : {})
       },
       signal: AbortSignal.timeout(20000)
+    }).catch((error) => {
+      throw new Error(`CLIProxyAPI 本地管理接口连接失败（${new URL(managementBaseUrl).host}）：${error.cause?.code || error.message}`);
     });
     if (!response.ok) throw new Error(`CLIProxyAPI 管理接口 ${route} 返回 HTTP ${response.status}`);
     return response.json();
@@ -241,7 +243,7 @@ export function createGeminiAccounts({ proxyRoot, managementBaseUrl, openExterna
         windows: (group.buckets || []).map((bucket) => ({
           window: quotaWindow(bucket),
           windowId: bucket.window || '',
-          remaining: quotaPercent(bucket.remainingFraction ?? (bucket.resetTime ? 0 : null)),
+          remaining: quotaPercent(bucket.remainingFraction),
           reset: bucket.resetTime || ''
         })).sort((first, second) => Number(second.windowId === 'weekly') - Number(first.windowId === 'weekly'))
       })),
